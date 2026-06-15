@@ -1,0 +1,16 @@
+{
+  "notes": [
+    {
+      "id": 2,
+      "title": "学习心得",
+      "content": "今天学会了如何用 Express 和 JSON 搭建后端！",
+      "createdAt": "2024-05-14T11:30:00.000Z"
+    },
+    {
+      "id": 3,
+      "title": "通过 Postman 创建的笔记",
+      "content": "这是用 Postman 发送 POST 请求创建的！",
+      "createdAt": "2026-05-14T14:22:52.593Z"
+    }
+  ]
+}

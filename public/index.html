@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>锋锋の小站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+</head>
+<body>
+     <nav class="nav-bar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-logo">锋锋の小站</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link active">主页</a>
+                <a href="about.html" class="nav-link">关于</a>
+                <a href="blog.html" class="nav-link">动态</a>
+            </div>
+        </div>
+    </nav>
+
+        <div class="container">
+        <header>
+            <h1 class="name">锋锋の小站</h1>
+            <p class="tagline">欢迎来到我的个人空间</p>
+        </header>
+
+        <section class="time-section">
+            <div class="card time-card">
+                <div class="time-display">
+                    <div class="time-main" id="currentTime">00:00:00</div>
+                    <div class="date-display" id="currentDate">2024年1月1日 星期一</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="carousel-section">
+            <div class="carousel-container">
+                <div class="carousel-track" id="carouselTrack">
+                    <div class="carousel-slide">
+                        <div class="slide-placeholder"><img id="carouselImg1" src="img/1.jpg" alt=""></div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="slide-placeholder"><img id="carouselImg2" src="img/2.jpg" alt=""></div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="slide-placeholder"><img id="carouselImg3" src="img/3.jpg" alt=""></div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="slide-placeholder"><img id="carouselImg4" src="img/4.jpg" alt=""></div>
+                    </div>
+                </div>
+                <button class="carousel-btn prev-btn" id="prevBtn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-btn next-btn" id="nextBtn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <div class="carousel-dots" id="carouselDots"></div>
+            </div>
+        </section>
+
+        <section class="quote-section">
+            <div class="quote-card">
+                <div class="quote-content">
+                    <div class="quote-icon">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <div class="quote-text" id="quoteText">每一个不曾起舞的日子，都是对生命的辜负</div>
+                    <div class="quote-author" id="quoteAuthor"></div>
+                    <button class="quote-btn" id="newQuoteBtn">
+                        <i class="fas fa-sync-alt"></i> 换一句
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        
+
+        <section id="about">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h2 class="section-title">关于</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <div class="about-text">
+                    <p id="aboutText1">这里是锋锋的小站，一个记录生活、分享想法的个人空间。</p>
+                    <p id="aboutText2">喜欢动漫、游戏、编程和一切美好的事物。希望这里能给你带来一些温暖和快乐。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="updates">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h2 class="section-title">动态</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="updates-list" id="updatesList">
+            </div>
+        </section>
+
+
+
+        <footer>
+            <p>&copy; 2026 锋锋の小站. All rights reserved.</p>
+        </footer>
+        <button class="back-to-top" id="backToTop">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

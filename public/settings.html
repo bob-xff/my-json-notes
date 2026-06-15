@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置 - 锋锋の小站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+       
+</head>
+<body class="admin-page">
+    <nav class="dashboard-nav">
+        <div class="dashboard-content">
+            <a href="index.html" class="dashboard-logo">锋锋の小站</a>
+            <div class="dashboard-links">
+                <a href="dashboard.html" class="dashboard-link">发布文章</a>
+                <a href="posts.html" class="dashboard-link">文章管理</a>
+                <a href="settings.html" class="dashboard-link active">设置</a>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> 退出
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1 class="name">设置</h1>
+            <p class="tagline">管理您的网站设置</p>
+        </header>
+
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h2 class="section-title">个人信息</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <form id="profileForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="siteName">网站名称</label>
+                            <input type="text" id="siteName" class="form-input" value="锋锋の小站" placeholder="请输入网站名称">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="siteTagline">网站标语</label>
+                            <input type="text" id="siteTagline" class="form-input" value="欢迎来到我的个人空间" placeholder="请输入网站标语">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="adminEmail">管理员邮箱</label>
+                        <input type="email" id="adminEmail" class="form-input" value="admin@example.com" placeholder="请输入管理员邮箱">
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> 保存更改
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <h2 class="section-title">网站设置</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3 class="setting-title">允许评论</h3>
+                        <p class="setting-desc">允许访客在文章下发表评论</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3 class="setting-title">显示阅读量</h3>
+                        <p class="setting-desc">在文章列表中显示阅读量</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3 class="setting-title">允许点赞</h3>
+                        <p class="setting-desc">允许访客点赞文章</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h3 class="setting-title">网站维护模式</h3>
+                        <p class="setting-desc">启用后网站将暂时关闭</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-images"></i>
+                </div>
+                <h2 class="section-title">轮播图片管理</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <form id="imagesForm">
+                    <div class="form-group">
+                        <label class="form-label">图片1</label>
+                        <input type="text" id="image1" class="form-input" value="img/1.jpg" placeholder="请输入图片路径">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">图片2</label>
+                        <input type="text" id="image2" class="form-input" value="img/2.jpg" placeholder="请输入图片路径">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">图片3</label>
+                        <input type="text" id="image3" class="form-input" value="img/3.jpg" placeholder="请输入图片路径">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">图片4</label>
+                        <input type="text" id="image4" class="form-input" value="img/4.jpg" placeholder="请输入图片路径">
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> 保存图片设置
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-quote-right"></i>
+                </div>
+                <h2 class="section-title">励志语句管理</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <form id="quotesForm">
+                    <div class="form-group">
+                        <label class="form-label">语句1</label>
+                        <input type="text" id="quote1" class="form-input" value="山高水长，路漫漫其修远兮，吾将上下而求索。" placeholder="请输入励志语句">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">语句2</label>
+                        <input type="text" id="quote2" class="form-input" value="海阔凭鱼跃，天高任鸟飞。" placeholder="请输入励志语句">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">语句3</label>
+                        <input type="text" id="quote3" class="form-input" value="不积跬步，无以至千里；不积小流，无以成江海。" placeholder="请输入励志语句">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">语句4</label>
+                        <input type="text" id="quote4" class="form-input" value="天行健，君子以自强不息；地势坤，君子以厚德载物。" placeholder="请输入励志语句">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">语句5</label>
+                        <input type="text" id="quote5" class="form-input" value="宝剑锋从磨砺出，梅花香自苦寒来。" placeholder="请输入励志语句">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">语句6</label>
+                        <input type="text" id="quote6" class="form-input" value="世上无难事，只怕有心人。" placeholder="请输入励志语句">
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> 保存励志语句
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h2 class="section-title">关于内容管理</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <form id="aboutForm">
+                    <div class="form-group">
+                        <label class="form-label" for="aboutText1">第一段</label>
+                        <textarea id="aboutText1" class="form-input fixed-textarea" rows="3" placeholder="请输入关于内容第一段">这里是锋锋，一个热爱生活的普通人。</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="aboutText2">第二段</label>
+                        <textarea id="aboutText2" class="form-input fixed-textarea" rows="3" placeholder="请输入关于内容第二段">喜欢动漫、游戏、编程和一切美好的事物。相信简单的生活也能充满色彩。</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="aboutText3">第三段</label>
+                        <textarea id="aboutText3" class="form-input fixed-textarea" rows="3" placeholder="请输入关于内容第三段">这个网站是我记录生活、分享想法的小天地。希望这里能给你带来一些温暖和快乐。</textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> 保存关于内容
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h2 class="section-title">兴趣爱好管理</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <form id="interestsForm">
+                    <div class="form-group">
+                        <label class="form-label" for="animeDesc">动漫描述</label>
+                        <textarea id="animeDesc" class="form-input fixed-textarea" rows="3" placeholder="请输入动漫兴趣描述">热爱观看各种类型的动漫，从热血少年到治愈日常，每一部都是心灵的慰藉。</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="gameDesc">游戏描述</label>
+                        <textarea id="gameDesc" class="form-input fixed-textarea" rows="3" placeholder="请输入游戏兴趣描述">享受游戏带来的乐趣，无论是独立游戏还是大作，都能找到属于自己的快乐。</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="codingDesc">编程描述</label>
+                        <textarea id="codingDesc" class="form-input fixed-textarea" rows="3" placeholder="请输入编程兴趣描述">用代码创造有趣的项目，享受解决问题的过程，不断学习新技术。</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="musicDesc">音乐描述</label>
+                        <textarea id="musicDesc" class="form-input fixed-textarea" rows="3" placeholder="请输入音乐兴趣描述">喜欢听各种风格的音乐，音乐是生活中不可或缺的调味剂。</textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> 保存兴趣爱好
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h2 class="section-title">联系方式管理</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label class="form-label" for="contactIntro">联系介绍</label>
+                        <textarea id="contactIntro" class="form-input fixed-textarea" rows="2" placeholder="请输入联系介绍">如果你想和我交流，可以通过以下方式联系我：</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="emailContact">邮箱</label>
+                        <input type="text" id="emailContact" class="form-input" value="邮箱：contact@example.com" placeholder="请输入邮箱联系方式">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="githubContact">GitHub</label>
+                        <input type="text" id="githubContact" class="form-input" value="GitHub：github.com/yourname" placeholder="请输入GitHub联系方式">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="twitterContact">Twitter</label>
+                        <input type="text" id="twitterContact" class="form-input" value="Twitter：@yourname" placeholder="请输入Twitter联系方式">
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> 保存联系方式
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h2 class="section-title">安全设置</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <form id="securityForm">
+                    <div class="form-group">
+                        <label class="form-label" for="currentPassword">当前密码</label>
+                        <input type="password" id="currentPassword" class="form-input" placeholder="请输入当前密码">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="newPassword">新密码</label>
+                            <input type="password" id="newPassword" class="form-input" placeholder="请输入新密码">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="confirmPassword">确认密码</label>
+                            <input type="password" id="confirmPassword" class="form-input" placeholder="请再次输入新密码">
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-key"></i> 更新密码
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h2 class="section-title">数据管理</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="clearCache()">
+                        <i class="fas fa-broom"></i> 清除缓存
+                    </button>
+                    <button class="btn btn-danger" onclick="resetSettings()">
+                        <i class="fas fa-undo"></i> 重置设置
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

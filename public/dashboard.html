@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理 - 锋锋の小站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+       
+</head>
+<body class="admin-page">
+    <nav class="dashboard-nav">
+        <div class="dashboard-content">
+            <a href="index.html" class="dashboard-logo">锋锋の小站</a>
+            <div class="dashboard-links">
+                <a href="dashboard.html" class="dashboard-link active">发布文章</a>
+                <a href="posts.html" class="dashboard-link">文章管理</a>
+                <a href="settings.html" class="dashboard-link">设置</a>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> 退出
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1 class="name">后台管理</h1>
+            <p class="tagline">发布和管理您的文章</p>
+        </header>
+
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-pen"></i>
+                </div>
+                <h2 class="section-title">发布新文章</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <form id="postForm">
+                    <div class="form-group">
+                        <label class="form-label" for="postTitle">文章标题</label>
+                        <input type="text" id="postTitle" class="form-input" placeholder="请输入文章标题" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="postCategory">分类</label>
+                            <select id="postCategory" class="form-input">
+                                <option value="">选择分类</option>
+                                <option value="life">生活</option>
+                                <option value="tech">技术</option>
+                                <option value="anime">动漫</option>
+                                <option value="game">游戏</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="postTags">标签</label>
+                            <input type="text" id="postTags" class="form-input" placeholder="用逗号分隔多个标签">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="postContent">文章内容</label>
+                        <textarea id="postContent" class="form-input fixed-textarea" placeholder="请输入文章内容..." required></textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> 发布文章
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                            <i class="fas fa-eraser"></i> 清空
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-list"></i>
+                </div>
+                <h2 class="section-title">最近文章</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <div class="posts-list">
+                    <!-- 动态内容将通过JavaScript加载 -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

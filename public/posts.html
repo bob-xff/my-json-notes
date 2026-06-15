@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章管理 - 锋锋の小站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+       
+</head>
+<body class="admin-page">
+    <nav class="dashboard-nav">
+        <div class="dashboard-content">
+            <a href="index.html" class="dashboard-logo">锋锋の小站</a>
+            <div class="dashboard-links">
+                <a href="dashboard.html" class="dashboard-link">发布文章</a>
+                <a href="posts.html" class="dashboard-link active">文章管理</a>
+                <a href="settings.html" class="dashboard-link">设置</a>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> 退出
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1 class="name">文章管理</h1>
+            <p class="tagline">管理您的所有文章</p>
+        </header>
+
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-list"></i>
+                </div>
+                <h2 class="section-title">文章列表</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="card">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" class="form-input" placeholder="搜索文章...">
+                    <button class="btn btn-primary" onclick="searchPosts()">
+                        <i class="fas fa-search"></i> 搜索
+                    </button>
+                </div>
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-filter="全部">全部</button>
+                    <button class="filter-btn" data-filter="生活">生活</button>
+                    <button class="filter-btn" data-filter="技术">技术</button>
+                    <button class="filter-btn" data-filter="动漫">动漫</button>
+                    <button class="filter-btn" data-filter="游戏">游戏</button>
+                </div>
+                <div class="posts-list">
+                    <!-- 动态内容将通过JavaScript加载 -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
