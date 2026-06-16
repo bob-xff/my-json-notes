@@ -53,9 +53,12 @@ const DEFAULT_DATA = {
     }
 };
 
+// 检测 Railway Volume 路径（如果存在则使用，否则用项目目录）
+const DATA_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH || __dirname;
+
 // 工具函数：读取 data.json（不存在时自动创建）
 async function readData() {
-    const dataPath = path.join(__dirname, 'data.json');
+    const dataPath = path.join(DATA_DIR, 'data.json');
     try {
         const data = await fs.readFile(dataPath, 'utf8');
         return JSON.parse(data);
@@ -70,7 +73,7 @@ async function readData() {
 
 // 工具函数：写入 data.json
 async function writeData(data) {
-    const dataPath = path.join(__dirname, 'data.json');
+    const dataPath = path.join(DATA_DIR, 'data.json');
     await fs.writeFile(dataPath, JSON.stringify(data, null, 2), 'utf8');
 }
 
