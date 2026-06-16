@@ -2039,13 +2039,19 @@ body:not(.admin-page) section {
 /* ========== 移动端轮播图适配 ========== */
 @media (max-width: 768px) {
     .carousel-slide {
-        height: auto;
-        aspect-ratio: 16 / 9;
+        height: 220px;
     }
 
     .slide-placeholder {
-        height: auto;
-        aspect-ratio: 16 / 9;
+        height: 100%;
+    }
+
+    .slide-placeholder img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
     }
 
     .carousel-btn {

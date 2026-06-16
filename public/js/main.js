@@ -238,6 +238,7 @@ function initIndexPage() {
     async function loadUpdates() {
         try {
             const posts = await apiRequest('/api/posts');
+            posts.sort((a, b) => new Date(b.date) - new Date(a.date));
             const updatesList = document.querySelector('.updates-list');
             updatesList.innerHTML = '';
 
@@ -452,6 +453,7 @@ function initBlogPage() {
     async function loadBlogPosts() {
         try {
             const posts = await apiRequest('/api/posts');
+            posts.sort((a, b) => new Date(b.date) - new Date(a.date));
             const blogList = document.getElementById('blogList');
             blogList.innerHTML = '';
 
@@ -601,6 +603,7 @@ function initDashboardPage() {
     async function loadRecentPosts() {
         try {
             const posts = await apiRequest('/api/posts');
+            posts.sort((a, b) => new Date(b.date) - new Date(a.date));
             const postsList = document.querySelector('.posts-list');
             postsList.innerHTML = '';
 
@@ -685,6 +688,7 @@ function initPostsPage() {
     async function loadPosts(filter = '全部') {
         try {
             const posts = await apiRequest('/api/posts');
+            posts.sort((a, b) => new Date(b.date) - new Date(a.date));
             const postsList = document.querySelector('.posts-list');
             postsList.innerHTML = '';
 
@@ -788,6 +792,7 @@ function initPostsPage() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
         try {
             const posts = await apiRequest('/api/posts');
+            posts.sort((a, b) => new Date(b.date) - new Date(a.date));
             const postsList = document.querySelector('.posts-list');
             postsList.innerHTML = '';
 
