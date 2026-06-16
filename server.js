@@ -53,8 +53,8 @@ const DEFAULT_DATA = {
     }
 };
 
-// 检测 Railway Volume 路径（如果存在则使用，否则用项目目录）
-const DATA_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH || __dirname;
+// 检测持久化存储路径（Railway Volume 或其他环境变量）
+const DATA_DIR = process.env.DATA_PATH || __dirname;
 
 // 工具函数：读取 data.json（不存在时自动创建）
 async function readData() {
