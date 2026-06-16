@@ -177,7 +177,8 @@ app.post('/api/reset-settings', async (req, res) => {
 app.get('/api/notes', async (req, res) => {
     try {
         const data = await readData();
-        res.json(data.notes);
+        const sortedNotes = data.notes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        res.json(sortedNotes);
     } catch (error) {
         console.error('获取笔记失败:', error);
         res.status(500).json({ message: '服务器内部错误' });
@@ -226,7 +227,8 @@ app.delete('/api/notes/:id', async (req, res) => {
 app.get('/api/posts', async (req, res) => {
     try {
         const data = await readData();
-        res.json(data.posts);
+        const sortedPosts = data.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        res.json(sortedPosts);
     } catch (error) {
         console.error('获取文章失败:', error);
         res.status(500).json({ message: '服务器内部错误' });

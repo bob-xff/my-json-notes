@@ -2035,3 +2035,30 @@ body:not(.admin-page) section {
     transform: translateY(0) !important;
     display: block !important;
 }
+
+/* ========== 移动端轮播图适配 ========== */
+@media (max-width: 768px) {
+    .carousel-slide {
+        height: auto;
+        aspect-ratio: 16 / 9;
+    }
+
+    .slide-placeholder {
+        height: auto;
+        aspect-ratio: 16 / 9;
+    }
+
+    .carousel-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+
+    .prev-btn {
+        left: 8px;
+    }
+
+    .next-btn {
+        right: 8px;
+    }
+}
