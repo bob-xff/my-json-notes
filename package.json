@@ -1,18 +1,26 @@
 {
   "name": "my-json-notes",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0.0",
+  "description": "锋锋の小站 - 基于 Express + JSON 文件存储的个人展示网站（博客/动态/轮播/后台管理）",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "personal-website",
+    "blog",
+    "express",
+    "json",
+    "nodejs"
+  ],
+  "author": "bob-xff",
   "license": "ISC",
   "type": "commonjs",
+  "engines": {
+    "node": ">=16"
+  },
   "dependencies": {
-    "cors": "^2.8.5",
     "express": "^4.21.0"
   },
   "devDependencies": {
