@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log*
+.env
+.env.*
+!.env.example
+data.json
+data.json.tmp
+data.json.corrupted-*
+data_backup.json
+.git
+.github
+.vscode
+*.log
+README.md
+render.yaml
+Dockerfile
+.dockerignore
