@@ -8,11 +8,18 @@
       "category": "技术",
       "tags": [],
       "date": "2026-09-16",
-      "views": 7,
+      "views": 10,
       "likes": 1,
-      "comments": 0,
+      "comments": 1,
       "excerpt": "敬请期待......",
-      "commentList": []
+      "commentList": [
+        {
+          "id": 1789566739504,
+          "nickname": "游客",
+          "content": "期待期待",
+          "createdAt": "2026-09-16T13:52:19.504Z"
+        }
+      ]
     }
   ],
   "siteInfo": {
@@ -50,5 +57,10 @@
     "email": "邮箱：contact@example.com",
     "github": "GitHub：github.com/yourname",
     "twitter": "Twitter：@yourname"
+  },
+  "admin": {
+    "username": "admin",
+    "salt": "a535b55c8bec52c83d8d95b89f32a10a",
+    "hash": "85985ff7a98a28296651713cc0c4509c890606c1c282a595330b2691e193cbfa84ca920660b3d57f7c7c0adc29f4852313e514f5c4a954ff6b9ab776a04bd8dc"
   }
 }

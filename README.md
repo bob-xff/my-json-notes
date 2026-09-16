@@ -3,8 +3,11 @@
 一个基于 **Node.js + Express + JSON 文件存储** 的个人展示网站，无需数据库即可运行。
 粉系可爱风设计，内置博客、动态、轮播图、激励语录与完整的后台管理系统，开箱即用。
 
+🌐 **线上地址**：https://vdbnymlshqrm.sealosbja.site （部署于 Sealos，国内直连）
+
 ![Node](https://img.shields.io/badge/Node.js-%3E%3D16-brightgreen)
 ![Express](https://img.shields.io/badge/Express-4.x-blue)
+![Docker](https://img.shields.io/badge/Docker-ghcr.io-2496ED)
 ![License](https://img.shields.io/badge/License-ISC-yellow)
 
 ---
@@ -74,23 +77,34 @@ cp .env.example .env   # 然后编辑 .env，设置强密码
 
 ## ☁️ 部署方案（发布到互联网）
 
-### 方案 A：Railway（推荐，5 分钟上线，零运维）
+### ✅ 方案 A：Sealos（本站当前使用的方案，国内直连最快、按量计费最省）
+
+线上示例：**https://vdbnymlshqrm.sealosbja.site**（实测国内响应 0.15~0.35s）
+
+1. 注册 [cloud.sealos.run](https://cloud.sealos.run)（支持 GitHub / 微信 / 手机号登录），新用户送体验金，之后按量计费（0.2核/256M 约合 ¥0.14/天）
+2. 控制台 → **应用管理** → 新建应用：
+   - **镜像**：`ghcr.io/bob-xff/my-json-notes:latest`（公开镜像，由 GitHub Actions 自动构建）
+   - **规格**：0.2核 / 256M 起步（不建议 128M —— Node 加载大图时容易 OOM 闪断）
+   - **容器端口**：`3000`，协议选 HTTPS，打开外网访问开关
+   - **环境变量**：`DATA_PATH=/data`、`ADMIN_USERNAME=admin`、`ADMIN_PASSWORD=<强密码>`
+   - **高级配置 → 本地存储**：`1Gi` 挂载到 `/data` ← 数据持久化的关键，文章评论重启不丢
+3. 部署完成后自动分配 `https://xxxx.sealosbja.site` 公网地址，也可绑定自己的域名
+
+**更新线上版本**：`git push` 后 Actions 自动构建新镜像（见 `.github/workflows/docker-publish.yml`），到 Sealos 应用页点 **重新部署** 即可生效。
+
+**自定义镜像**：仓库自带 `Dockerfile`，推送到自己的 GitHub 后 Actions 会自动发布到 `ghcr.io/<你的用户名>/my-json-notes:latest`，本地无需安装 Docker。
+
+### 方案 B：Railway（$5/月，需国际信用卡）
 
 代码已原生支持 Railway 的 Volume 持久化，步骤：
 
-1. 把本仓库推送到你的 GitHub（已就绪）
-2. 打开 [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo** → 选择 `my-json-notes`
-3. Railway 会自动识别 `npm start` 并部署
-4. **添加持久化存储**（重要，否则每次重新部署文章/评论都会丢失）：
-   - 项目里右键 → **Volume**，挂载到服务，挂载路径填 `/data`
-   - 在服务的 **Variables** 中添加 `DATA_PATH=/data`
-5. 设置环境变量：
-   - `ADMIN_USERNAME=admin`
-   - `ADMIN_PASSWORD=<你的强密码>`
-6. **Settings → Networking → Generate Domain** 生成 `xxx.up.railway.app` 公网地址（也可绑定自己的域名）
-7. 部署完成后访问 `https://xxx.up.railway.app/admin.html` 登录后台发文章
+1. 打开 [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo** → 选择 `my-json-notes`
+2. Railway 会自动识别 `npm start` 并部署
+3. **添加持久化存储**（重要，否则重新部署会丢文章）：右键项目 → **Volume** 挂载到服务，路径填 `/data`，并在 **Variables** 里加 `DATA_PATH=/data`
+4. 设置 `ADMIN_USERNAME` / `ADMIN_PASSWORD`
+5. **Settings → Networking → Generate Domain** 生成公网地址
 
-### 方案 B：腾讯云 / 阿里云轻量服务器（国内访问最快）
+### 方案 C：腾讯云 / 阿里云轻量服务器（年付约 ¥50 起，最稳）
 
 适合已有云服务器或需要自定义域名+备案的场景：
 
@@ -118,12 +132,7 @@ server {
 
 > 国内服务器绑定域名需要 ICP 备案；数据在服务器本地 `data.json`，记得定期备份。
 
-### 方案 C：Render / Zeabur 等其它 PaaS
-
-- **Zeabur**：对国内网络较友好，同样支持从 GitHub 部署，建议挂持久盘并设 `DATA_PATH`
-- **Render 免费版**：可以跑但有两个硬伤——15 分钟无访问会休眠、**免费档无持久磁盘**（重启丢数据），只适合临时演示，不建议存正式文章
-
-**总结**：想省事选 **Railway（方案 A）**；要国内快选 **轻量服务器（方案 B）**。无论哪种，都请先设 `ADMIN_PASSWORD`！
+> ⚠️ **面向国内访客不建议** Render / Vercel / Netlify：控制台与默认域名在国内网络均无法直连（实测连接超时）。仓库中的 `render.yaml` 仅供海外访问场景使用。
 
 ## 📡 API 一览
 
