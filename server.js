@@ -6,6 +6,26 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// 极简 .env 加载器（零依赖）：启动时读取项目根目录的 .env 文件注入环境变量。
+// 已经设置的系统环境变量优先，不会被 .env 覆盖。
+(function loadEnv() {
+    try {
+        const content = require('fs').readFileSync(path.join(__dirname, '.env'), 'utf8');
+        for (const line of content.split(/\r?\n/)) {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed.startsWith('#')) continue;
+            const eq = trimmed.indexOf('=');
+            if (eq === -1) continue;
+            const key = trimmed.slice(0, eq).trim();
+            let value = trimmed.slice(eq + 1).trim();
+            if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+                value = value.slice(1, -1);
+            }
+            if (key && !(key in process.env)) process.env[key] = value;
+        }
+    } catch (_) { /* 没有 .env 文件时静默忽略 */ }
+})();
+
 // 中间件：解析 JSON 请求体（限制大小，防止恶意超大请求）
 app.use(express.json({ limit: '1mb' }));
 
@@ -98,11 +118,19 @@ async function readData() {
     try {
         const data = await fs.readFile(DATA_FILE, 'utf8');
         const parsed = JSON.parse(data);
-        // 兼容旧版数据文件：补齐 admin 凭据字段
+        // 兼容旧版数据文件：补齐 admin 凭据与文章统计字段
+        let migrated = false;
         if (!parsed.admin || !parsed.admin.hash) {
             parsed.admin = buildAdminCredentials();
-            await writeData(parsed).catch(() => {});
+            migrated = true;
         }
+        for (const post of (parsed.posts || [])) {
+            if (!Array.isArray(post.commentList)) { post.commentList = []; migrated = true; }
+            for (const field of ['views', 'likes', 'comments']) {
+                if (typeof post[field] !== 'number') { post[field] = Number(post[field]) || 0; migrated = true; }
+            }
+        }
+        if (migrated) await writeData(parsed).catch(() => {});
         return parsed;
     } catch (err) {
         if (err.code === 'ENOENT') {
@@ -442,6 +470,111 @@ app.post('/api/posts/:id/like', async (req, res) => {
     }
 });
 
+// GET /api/posts/:id/comments - 获取评论列表（公开）
+app.get('/api/posts/:id/comments', async (req, res) => {
+    try {
+        const postId = parseInt(req.params.id, 10);
+        const data = await readData();
+        const post = (data.posts || []).find(p => p.id === postId);
+        if (!post) {
+            return res.status(404).json({ message: '文章未找到' });
+        }
+        res.json(post.commentList || []);
+    } catch (error) {
+        console.error('获取评论失败:', error);
+        res.status(500).json({ message: '服务器内部错误' });
+    }
+});
+
+// 评论防刷：同一 IP 两次评论至少间隔 5 秒，每小时最多 30 条
+const commentLimits = new Map();
+
+function getCommentBlockReason(ip) {
+    const record = commentLimits.get(ip);
+    if (!record) return null;
+    const now = Date.now();
+    if (now - record.lastAt < 5000) return '评论太频繁了，休息一下再试～';
+    record.hour = record.hour.filter(t => now - t < 60 * 60 * 1000);
+    if (record.hour.length >= 30) return '本小时评论数已达上限，请稍后再试';
+    return null;
+}
+
+function recordCommentActivity(ip) {
+    const record = commentLimits.get(ip) || { lastAt: 0, hour: [] };
+    record.lastAt = Date.now();
+    record.hour.push(record.lastAt);
+    commentLimits.set(ip, record);
+}
+
+// POST /api/posts/:id/comments - 发表评论（公开，访客可评；昵称可选）
+app.post('/api/posts/:id/comments', async (req, res) => {
+    try {
+        const postId = parseInt(req.params.id, 10);
+        const ip = req.ip || req.socket.remoteAddress || 'unknown';
+        const blocked = getCommentBlockReason(ip);
+        if (blocked) {
+            return res.status(429).json({ message: blocked });
+        }
+        const { nickname, content } = req.body || {};
+        const name = String(nickname || '').trim() || '游客';
+        const text = String(content || '').trim();
+        if (!text) {
+            return res.status(400).json({ message: '评论内容不能为空' });
+        }
+        if (name.length > 20) {
+            return res.status(400).json({ message: '昵称不能超过 20 个字符' });
+        }
+        if (text.length > 500) {
+            return res.status(400).json({ message: '评论内容不能超过 500 个字符' });
+        }
+        const data = await readData();
+        const post = (data.posts || []).find(p => p.id === postId);
+        if (!post) {
+            return res.status(404).json({ message: '文章未找到' });
+        }
+        post.commentList = Array.isArray(post.commentList) ? post.commentList : [];
+        const comment = {
+            id: Date.now(),
+            nickname: name,
+            content: text,
+            createdAt: new Date().toISOString()
+        };
+        post.commentList.push(comment);
+        post.comments = post.commentList.length;
+        await writeData(data);
+        recordCommentActivity(ip);
+        res.status(201).json(comment);
+    } catch (error) {
+        console.error('发表评论失败:', error);
+        res.status(500).json({ message: '服务器内部错误' });
+    }
+});
+
+// DELETE /api/posts/:id/comments/:commentId - 删除评论（管理员 moderation）
+app.delete('/api/posts/:id/comments/:commentId', requireAuth, async (req, res) => {
+    try {
+        const postId = parseInt(req.params.id, 10);
+        const commentId = parseInt(req.params.commentId, 10);
+        const data = await readData();
+        const post = (data.posts || []).find(p => p.id === postId);
+        if (!post) {
+            return res.status(404).json({ message: '文章未找到' });
+        }
+        post.commentList = Array.isArray(post.commentList) ? post.commentList : [];
+        const index = post.commentList.findIndex(c => c.id === commentId);
+        if (index === -1) {
+            return res.status(404).json({ message: '评论未找到' });
+        }
+        post.commentList.splice(index, 1);
+        post.comments = post.commentList.length;
+        await writeData(data);
+        res.status(204).send();
+    } catch (error) {
+        console.error('删除评论失败:', error);
+        res.status(500).json({ message: '服务器内部错误' });
+    }
+});
+
 app.delete('/api/posts/:id', requireAuth, async (req, res) => {
     try {
         const postId = parseInt(req.params.id, 10);
@@ -646,10 +779,17 @@ app.use((err, req, res, next) => {
 });
 
 // 启动服务器
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`✅ 服务器运行在 http://localhost:${PORT}`);
     console.log(`📁 数据文件路径: ${DATA_FILE}`);
-    if (!process.env.ADMIN_PASSWORD) {
-        console.log('🔑 提示：当前使用默认管理员账号 admin / admin123，建议通过环境变量 ADMIN_USERNAME / ADMIN_PASSWORD 覆盖，并在登录后修改密码');
-    }
+    try {
+        const data = await readData();
+        if (verifyPassword('admin123', data.admin)) {
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log('⚠️  安全警告：管理员密码仍是默认的 admin123！');
+            console.log('   请立即在后台「设置 → 安全设置」中修改密码，');
+            console.log('   或通过环境变量 / .env 中的 ADMIN_PASSWORD 指定强密码。');
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        }
+    } catch (_) { /* 忽略启动检查失败 */ }
 });

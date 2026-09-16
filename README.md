@@ -13,7 +13,7 @@
 
 ### 前台
 - 🏠 **主页**：实时时钟（数字翻动动画）、图片轮播（自动播放 / 触摸滑动 / Ken Burns 缩放）、每日一句、关于与最新动态
-- 📖 **动态页**：文章列表，点击卡片打开**阅读弹窗**，支持**点赞**（每篇文章每浏览器限一次，带爆心动画）与**浏览量统计**
+- 📖 **动态页**：文章列表，点击卡片打开**阅读弹窗**，支持**点赞**（每篇文章每浏览器限一次，带爆心动画）、**浏览量统计** 与 **评论**（游客可评论，管理员可在弹窗中删除）
 - 👤 **关于页**：个人简介、兴趣爱好、联系方式（均可在后台自定义）
 - 🎨 **全局动效**：樱花飘落、漂浮渐变光斑、流光渐变标题、打字机标语、卡片聚光灯跟随鼠标、3D 倾斜、按钮涟漪、滚动级联入场、返回顶部滚动进度环、自定义粉色滚动条，并适配 `prefers-reduced-motion` 无障碍偏好
 
@@ -31,9 +31,11 @@
 | 密码哈希 | `scrypt + 随机盐` 存储，杜绝明文；使用 `timingSafeEqual` 防时序攻击 |
 | 接口鉴权 | 所有写操作（POST/PUT/DELETE）要求 `Bearer Token`（登录后颁发，24h 有效） |
 | 防暴力破解 | 同一 IP 15 分钟内登录失败 8 次即锁定 |
+| 评论防刷 | 同一 IP 两次评论至少间隔 5 秒，每小时最多 30 条；昵称/内容长度校验 |
 | XSS 防护 | 所有动态内容渲染前 HTML 转义，正文以纯文本渲染 |
 | 数据自愈 | `data.json` 损坏时自动备份并重建，网站不会 500 |
 | 原子写入 | 先写临时文件再重命名，避免写入中断损坏数据 |
+| 默认密码告警 | 服务器启动时检测到默认密码 `admin123` 会在控制台醒目告警 |
 
 ## 🚀 快速开始
 
@@ -52,22 +54,76 @@ npm run dev
 
 **默认管理员账号：** `admin` / `admin123` —— 首次登录后请立即在「设置 → 安全设置」中修改密码！
 
+支持 `.env` 文件配置（零依赖，服务器启动时自动读取；系统环境变量优先）：
+
+```bash
+cp .env.example .env   # 然后编辑 .env，设置强密码
+```
+
 ### 环境变量
 
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
-| `PORT` | 服务监听端口 | `3000` |
+| `PORT` | 服务监听端口（Railway 等平台自动注入） | `3000` |
 | `DATA_PATH` | 数据文件存放目录（Railway Volume 持久化用） | 项目根目录 |
-| `ADMIN_USERNAME` | 初始管理员用户名 | `admin` |
-| `ADMIN_PASSWORD` | 初始管理员密码（仅首次创建生效） | `admin123` |
+| `ADMIN_USERNAME` | 初始管理员用户名（仅首次创建 data.json 时生效） | `admin` |
+| `ADMIN_PASSWORD` | 初始管理员密码（仅首次创建 data.json 时生效） | `admin123` |
 
-## ☁️ 部署到 Railway
+> ⚠️ **部署前务必设置强密码**：可运行 `node -e "console.log(require('crypto').randomBytes(12).toString('base64url'))"` 生成。
+> `ADMIN_PASSWORD` 只在 data.json 尚无管理员凭据时生效；之后改密码请用后台「安全设置」。
 
-1. Fork 或推送本仓库到 GitHub
-2. 在 [Railway](https://railway.app) 新建项目并选择该仓库
-3. 添加一个 **Volume**，挂载路径设为 `/data`，并设置环境变量 `DATA_PATH=/data`
-4. （推荐）设置 `ADMIN_USERNAME` / `ADMIN_PASSWORD` 环境变量
-5. 部署完成，Railway 会自动注入 `PORT`
+## ☁️ 部署方案（发布到互联网）
+
+### 方案 A：Railway（推荐，5 分钟上线，零运维）
+
+代码已原生支持 Railway 的 Volume 持久化，步骤：
+
+1. 把本仓库推送到你的 GitHub（已就绪）
+2. 打开 [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo** → 选择 `my-json-notes`
+3. Railway 会自动识别 `npm start` 并部署
+4. **添加持久化存储**（重要，否则每次重新部署文章/评论都会丢失）：
+   - 项目里右键 → **Volume**，挂载到服务，挂载路径填 `/data`
+   - 在服务的 **Variables** 中添加 `DATA_PATH=/data`
+5. 设置环境变量：
+   - `ADMIN_USERNAME=admin`
+   - `ADMIN_PASSWORD=<你的强密码>`
+6. **Settings → Networking → Generate Domain** 生成 `xxx.up.railway.app` 公网地址（也可绑定自己的域名）
+7. 部署完成后访问 `https://xxx.up.railway.app/admin.html` 登录后台发文章
+
+### 方案 B：腾讯云 / 阿里云轻量服务器（国内访问最快）
+
+适合已有云服务器或需要自定义域名+备案的场景：
+
+```bash
+# 服务器上（Ubuntu 为例）
+git clone https://github.com/bob-xff/my-json-notes.git
+cd my-json-notes && npm install
+npm i -g pm2
+echo "ADMIN_PASSWORD=你的强密码" > .env
+pm2 start server.js --name my-site && pm2 save && pm2 startup
+```
+
+再用 Nginx 反向代理 3000 端口并配置 HTTPS（certbot 免费证书）：
+
+```nginx
+server {
+    server_name yourdomain.com;
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+> 国内服务器绑定域名需要 ICP 备案；数据在服务器本地 `data.json`，记得定期备份。
+
+### 方案 C：Render / Zeabur 等其它 PaaS
+
+- **Zeabur**：对国内网络较友好，同样支持从 GitHub 部署，建议挂持久盘并设 `DATA_PATH`
+- **Render 免费版**：可以跑但有两个硬伤——15 分钟无访问会休眠、**免费档无持久磁盘**（重启丢数据），只适合临时演示，不建议存正式文章
+
+**总结**：想省事选 **Railway（方案 A）**；要国内快选 **轻量服务器（方案 B）**。无论哪种，都请先设 `ADMIN_PASSWORD`！
 
 ## 📡 API 一览
 
@@ -84,6 +140,9 @@ npm run dev
 | GET / PUT / DELETE | `/api/posts/:id` | 写操作需鉴权 | 文章详情 / 编辑 / 删除 |
 | POST | `/api/posts/:id/view` | — | 浏览量 +1 |
 | POST | `/api/posts/:id/like` | — | 点赞 +1 |
+| GET | `/api/posts/:id/comments` | — | 评论列表 |
+| POST | `/api/posts/:id/comments` | — | 发表评论（防刷限流） |
+| DELETE | `/api/posts/:id/comments/:commentId` | ✅ | 删除评论（管理员） |
 | GET / PUT | `/api/site-info` | PUT 需鉴权 | 网站信息 |
 | GET / PUT | `/api/quotes` | PUT 需鉴权 | 激励语录 |
 | GET / PUT | `/api/about` | PUT 需鉴权 | 关于内容 |

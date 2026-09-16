@@ -2338,16 +2338,21 @@ body:not(.admin-page) header .tagline {
 }
 
 /* ---------- 按钮涟漪 ---------- */
+/* 注意：.carousel-btn（absolute）与 .back-to-top（fixed）有自身定位，
+   不能被本规则改成 relative，否则会掉出轮播/脱离悬浮位置 */
 .btn,
 .quote-btn,
 .login-btn,
 .action-btn,
 .filter-btn,
-.carousel-btn,
-.back-to-top,
 .logout-btn {
     position: relative;
     overflow: hidden;
+}
+
+.carousel-btn,
+.back-to-top {
+    overflow: hidden; /* 仅补充涟漪所需，定位沿用上方原始规则 */
 }
 
 .ripple {
@@ -2789,4 +2794,150 @@ body:not(.admin-page) header .tagline {
         opacity: 1;
         animation: none;
     }
+}
+
+/* ---------- 评论区（阅读弹窗内） ---------- */
+.modal-comments {
+    margin-top: 4px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.comments-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comments-title i {
+    color: var(--primary-color);
+}
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--border-color);
+    animation: riseIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+}
+
+.comment-avatar {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.comment-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.comment-nickname {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.comment-time {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.comment-delete {
+    margin-left: auto;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    opacity: 0;
+    transition: all 0.2s ease;
+}
+
+.comment-item:hover .comment-delete {
+    opacity: 1;
+}
+
+.comment-delete:hover {
+    color: #EF4444;
+    background: #FEE2E2;
+}
+
+.comment-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.comments-empty {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+    padding: 16px 0;
+}
+
+.comment-form {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment-form .form-input {
+    padding: 10px 14px;
+    font-size: 13px;
+}
+
+.comment-form textarea.form-input {
+    min-height: 64px;
+    resize: vertical;
+}
+
+.comment-form-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.comment-form .comment-submit {
+    padding: 9px 22px;
+    font-size: 13px;
+}
+
+.comment-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
 }

@@ -1,6 +1,20 @@
 {
   "notes": [],
-  "posts": [],
+  "posts": [
+    {
+      "id": 1,
+      "title": "全新改进",
+      "content": "敬请期待...",
+      "category": "技术",
+      "tags": [],
+      "date": "2026-09-16",
+      "views": 7,
+      "likes": 1,
+      "comments": 0,
+      "excerpt": "敬请期待......",
+      "commentList": []
+    }
+  ],
   "siteInfo": {
     "siteName": "锋锋の小站",
     "siteTagline": "欢迎来到我的个人空间",
@@ -36,10 +50,5 @@
     "email": "邮箱：contact@example.com",
     "github": "GitHub：github.com/yourname",
     "twitter": "Twitter：@yourname"
-  },
-  "admin": {
-    "username": "admin",
-    "salt": "ba59a9ca781fde2c5e2488084f8cf142",
-    "hash": "da6c0a24ba0a2a9539d44a60db931f176668142c00232402974682808ed1ce39b02a0a648752f536f5206a2fc99eed5e19ca273d33c684c116f4dac59a6553ae"
   }
 }

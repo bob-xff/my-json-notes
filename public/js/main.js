@@ -133,6 +133,21 @@ function openPostModal(post, { countView = true } = {}) {
                 ${(post.tags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
             </div>
             <div class="modal-content"></div>
+            <div class="modal-comments">
+                <h3 class="comments-title">
+                    <i class="fas fa-comments"></i> 评论 (<span class="comment-count">0</span>)
+                </h3>
+                <div class="comment-list"><p class="comments-empty">评论加载中...</p></div>
+                <form class="comment-form">
+                    <input type="text" class="form-input comment-nickname" placeholder="昵称（选填，默认显示“游客）”" maxlength="20">
+                    <textarea class="form-input comment-content" rows="2" placeholder="写下你的评论吧..." maxlength="500" required></textarea>
+                    <div class="comment-form-actions">
+                        <button type="submit" class="btn btn-primary comment-submit">
+                            <i class="fas fa-paper-plane"></i> 发表评论
+                        </button>
+                    </div>
+                </form>
+            </div>
             <div class="modal-footer">
                 <button class="like-btn ${modalState.likedIds.includes(post.id) ? 'liked' : ''}" data-post-id="${post.id}">
                     <i class="fas fa-heart"></i>
@@ -165,6 +180,105 @@ function openPostModal(post, { countView = true } = {}) {
     }
 
     overlay.querySelector('.like-btn').addEventListener('click', (e) => handleLike(e.currentTarget, post.id));
+
+    // ---- 评论区 ----
+    const nicknameInput = overlay.querySelector('.comment-nickname');
+    const savedNickname = localStorage.getItem('commentNickname');
+    if (savedNickname) nicknameInput.value = savedNickname;
+
+    overlay.querySelector('.comment-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const contentInput = overlay.querySelector('.comment-content');
+        const content = contentInput.value.trim();
+        const nickname = nicknameInput.value.trim();
+        if (!content) {
+            showToast('评论内容不能为空', 'error');
+            return;
+        }
+        const submitBtn = overlay.querySelector('.comment-submit');
+        submitBtn.disabled = true;
+        try {
+            await apiRequest(`/api/posts/${post.id}/comments`, {
+                method: 'POST',
+                body: JSON.stringify({ nickname, content })
+            });
+            if (nickname) localStorage.setItem('commentNickname', nickname);
+            contentInput.value = '';
+            showToast('评论发表成功！', 'success');
+            renderModalComments(overlay, post.id);
+        } catch (error) {
+            showToast(error.message || '评论失败', 'error');
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
+
+    renderModalComments(overlay, post.id);
+}
+
+// 渲染弹窗内的评论列表
+async function renderModalComments(overlay, postId) {
+    const listEl = overlay.querySelector('.comment-list');
+    const countEl = overlay.querySelector('.comment-count');
+    if (!listEl) return;
+    try {
+        const comments = await apiRequest(`/api/posts/${postId}/comments`);
+        listEl.innerHTML = '';
+        if (countEl) countEl.textContent = comments.length;
+        // 同步动态页卡片上的评论数
+        document.querySelectorAll(`.blog-item[data-post-id="${postId}"] .meta-comments`).forEach(el => {
+            el.innerHTML = `<i class="fas fa-comment"></i> ${comments.length}`;
+        });
+
+        if (comments.length === 0) {
+            listEl.innerHTML = '<p class="comments-empty">还没有评论，来抢沙发吧～</p>';
+            return;
+        }
+
+        const isAdmin = !!sessionStorage.getItem('adminToken');
+        comments.forEach((comment, i) => {
+            const item = document.createElement('div');
+            item.className = 'comment-item';
+            item.style.setProperty('--i', i);
+            const initial = (comment.nickname || '游').trim().charAt(0).toUpperCase() || '游';
+            item.innerHTML = `
+                <span class="comment-avatar">${escapeHtml(initial)}</span>
+                <div class="comment-body">
+                    <div class="comment-header">
+                        <span class="comment-nickname">${escapeHtml(comment.nickname || '游客')}</span>
+                        <span class="comment-time">${escapeHtml(formatCommentTime(comment.createdAt))}</span>
+                        ${isAdmin ? '<button class="comment-delete" title="删除评论"><i class="fas fa-trash"></i></button>' : ''}
+                    </div>
+                    <p class="comment-text">${escapeHtml(comment.content)}</p>
+                </div>
+            `;
+            if (isAdmin) {
+                item.querySelector('.comment-delete').addEventListener('click', async () => {
+                    if (!confirm('确定要删除这条评论吗？')) return;
+                    try {
+                        await apiRequest(`/api/posts/${postId}/comments/${comment.id}`, { method: 'DELETE' });
+                        showToast('评论已删除', 'success');
+                        renderModalComments(overlay, postId);
+                    } catch (error) {
+                        showToast(error.message || '删除失败', 'error');
+                    }
+                });
+            }
+            listEl.appendChild(item);
+        });
+    } catch (error) {
+        console.error('Failed to load comments:', error);
+        listEl.innerHTML = '<p class="comments-empty">评论加载失败，请稍后重试</p>';
+    }
+}
+
+function formatCommentTime(iso) {
+    try {
+        const d = new Date(iso);
+        return d.toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    } catch (_) {
+        return '';
+    }
 }
 
 function modalEscHandler(e) {
@@ -422,7 +536,8 @@ async function applySiteInfo({ applyHero = false } = {}) {
     try {
         const info = await apiRequest('/api/site-info');
         if (!info) return;
-        document.title = info.siteName || document.title;
+        // 仅主页把标题替换为站点名；子页面保留"页面名 - 站点名"格式，只更新 logo
+        if (applyHero) document.title = info.siteName || document.title;
         const logo = document.querySelector('.nav-logo');
         if (logo && info.siteName) logo.textContent = info.siteName;
         if (applyHero) {
@@ -874,7 +989,7 @@ function initBlogPage() {
                             <button class="meta-like-btn ${liked ? 'liked' : ''}" data-post-id="${post.id}" title="点赞">
                                 <i class="fas fa-heart"></i> <span class="like-count">${Number(post.likes) || 0}</span>
                             </button>
-                            <span><i class="fas fa-comment"></i> ${Number(post.comments) || 0}</span>
+                            <span class="meta-comments"><i class="fas fa-comment"></i> ${Number(post.comments) || 0}</span>
                             <span class="read-more"><i class="fas fa-book-open"></i> 阅读全文</span>
                         </div>
                     </div>
