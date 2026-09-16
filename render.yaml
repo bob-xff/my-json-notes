@@ -1,0 +1,23 @@
+# Render 部署蓝图（Blueprint）
+# 文档：https://render.com/docs/blueprint-spec
+# 使用：登录 Render 后访问 https://render.com/deploy?repo=https://github.com/bob-xff/my-json-notes
+services:
+  - type: web
+    name: my-json-notes
+    runtime: node
+    plan: free
+    region: singapore            # 离国内最近的节点
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true             # push 到 GitHub 自动重新部署
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: ADMIN_USERNAME
+        value: admin
+      # 密码不在仓库里明文存放，部署时在页面中填写
+      - key: ADMIN_PASSWORD
+        sync: false
+      # 注意：免费版没有持久磁盘，data.json 存在服务本地文件系统，
+      # 服务重启/休眠唤醒后数据会重置为初始状态（正式使用建议升级付费盘或用国内服务器）
